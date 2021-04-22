@@ -78,7 +78,7 @@ export class AuthenticationAccountElasticsearchRepository extends EsBaseReposito
     }
 
     async createUser(authenticationUser: AuthenticationUser): Promise<void> {
-        debug('createUser / inmem implementation!');
+        debug('createUser / elasticsearch implementation!');
 
         const newUser: AuthenticationUser = new AuthenticationUserImpl(authenticationUser.getUsername(),
             authenticationUser.getPassword(),
@@ -91,12 +91,12 @@ export class AuthenticationAccountElasticsearchRepository extends EsBaseReposito
             authenticationUser.getLink(),
             authenticationUser.getLinkDate());
 
-        if( this.userExists( newUser.getUsername() ) ) {
+        if( await this.userExists( newUser.getUsername() ) ) {
             //ALREADY_EXIST:
             throw new Error(`user ${newUser.getUsername()} already exists`);
         }
 
-        this.indexItem(newUser.getUsername(), newUser);
+        await this.indexItem(newUser.getUsername(), newUser);
     }
 
     async deleteUser(username: string): Promise<void> {
