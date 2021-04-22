@@ -8,6 +8,10 @@ const AUTH_ACCOUNT_INDEX: string = 'authentication-account';
 
 export class AuthenticationAccountElasticsearchRepository extends EsBaseRepository<AuthenticationUser> implements AuthenticationAccountRepository {
 
+    constructor() {
+        super();
+    }
+
     protected getIndex(): string {
         return AUTH_ACCOUNT_INDEX;
     }
