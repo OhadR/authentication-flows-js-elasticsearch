@@ -1,11 +1,16 @@
 import { AuthenticationAccountRepository,
 	AuthenticationUser,
     AuthenticationUserImpl } from 'authentication-flows-js';
+import { EsBaseRepository } from "./elasticsearch-base-repository";
 const debug = require('debug')('authentication-account-elasticsearch-repository');
 
-export class AuthenticationAccountElasticsearchRepository implements AuthenticationAccountRepository {
+const AUTH_ACCOUNT_INDEX: string = 'authentication-account';
 
-    private users = new Map<string, AuthenticationUser>();
+export class AuthenticationAccountElasticsearchRepository implements AuthenticationAccountRepository extends EsBaseRepository<AuthenticationUser> {
+
+    protected getIndex(): string {
+        return AUTH_ACCOUNT_INDEX;
+    }
 
     loadUserByUsername(username: string): AuthenticationUser {
         return this.users.get(username);
