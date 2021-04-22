@@ -1,6 +1,6 @@
 {
   "name": "authentication-flows-js-elasticsearch",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "elasticsearch implementation for authentication-flows-js",
   "main": "dist/index.js",
   "scripts": {
