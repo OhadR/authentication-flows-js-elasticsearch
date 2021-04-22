@@ -110,8 +110,8 @@ export class AuthenticationAccountElasticsearchRepository extends EsBaseReposito
 
     async addLink(username: string, link: string) {
         await this.updateItem(username, {
-            link: link,
-            linkDate: new Date()
+            token: link,
+            tokenDate: new Date()
         });
     }
 
