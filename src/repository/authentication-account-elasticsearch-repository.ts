@@ -88,8 +88,8 @@ export class AuthenticationAccountElasticsearchRepository extends EsBaseReposito
             authenticationUser.getFirstName(),
             authenticationUser.getLastName(),
             authenticationUser.getAuthorities(),
-            authenticationUser.getLink(),
-            authenticationUser.getLinkDate());
+            authenticationUser.getToken(),
+            authenticationUser.getTokenDate());
 
         if( await this.userExists( newUser.getUsername() ) ) {
             //ALREADY_EXIST:
@@ -128,8 +128,8 @@ export class AuthenticationAccountElasticsearchRepository extends EsBaseReposito
     async getLink(username: string): Promise<{ link: string; date: Date; }> {
         const storedUser: AuthenticationUser =  await this.loadUserByUsername(username);
         return {
-            link: storedUser.getLink(),
-            date: storedUser.getLinkDate()
+            link: storedUser.getToken(),
+            date: storedUser.getTokenDate()
         };
     }
 
