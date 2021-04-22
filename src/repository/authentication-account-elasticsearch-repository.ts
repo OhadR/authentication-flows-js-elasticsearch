@@ -154,10 +154,10 @@ export class AuthenticationAccountElasticsearchRepository extends EsBaseReposito
 
     async getUsernameByLink(token: string): Promise<string> {
         simple_query.query.term.token = token;
-        const items = await this.search(simple_query);
+        const items: any = await this.search(simple_query);
         if(!items)
             throw new Error("Could not find any user with this link.");
 
-        return items[0].getUsername();
+        return items[0].email;
     }
 }
