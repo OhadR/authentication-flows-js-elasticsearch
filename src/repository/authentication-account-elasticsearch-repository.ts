@@ -133,11 +133,11 @@ export class AuthenticationAccountElasticsearchRepository extends EsBaseReposito
         };
     }
 
-    async getUsernameByLink(link: string): Promise<string> {
-        const item = await this.getItem(link);
-        if(!item)
+    async getUsernameByLink(token: string): Promise<string> {
+        const items = await this.search({token: token});
+        if(!items)
             throw new Error("Could not find any user with this link.");
 
-        return item.getUsername();
+        return items[0].getUsername();
     }
 }
