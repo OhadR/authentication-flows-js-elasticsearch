@@ -23,7 +23,20 @@ export class AuthenticationAccountElasticsearchRepository extends EsBaseReposito
     }
 
     async loadUserByUsername(username: string): Promise<AuthenticationUser> {
-        return await this.getItem(username);
+        const userJson: any = await this.getItem(username);
+        const user: AuthenticationUser = new AuthenticationUserImpl(
+            userJson.email,
+            userJson.encodedPassword,
+            userJson.isActive,
+            userJson.loginAttemptsLeft,
+            userJson.passwordLastChangeDate,
+            userJson.firstName,
+            userJson.lastName,
+            userJson.authorities,
+            userJson.token,
+            userJson.tokenDate
+        );
+        return user;
     }
 
     async setEnabled(username: string) {
