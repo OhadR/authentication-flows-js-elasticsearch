@@ -6,50 +6,34 @@ const debug = require('debug')('authentication-account-elasticsearch-repository'
 
 const AUTH_ACCOUNT_INDEX: string = 'authentication-account';
 
-export class AuthenticationAccountElasticsearchRepository implements AuthenticationAccountRepository extends EsBaseRepository<AuthenticationUser> {
+export class AuthenticationAccountElasticsearchRepository extends EsBaseRepository<AuthenticationUser> implements AuthenticationAccountRepository {
 
     protected getIndex(): string {
         return AUTH_ACCOUNT_INDEX;
     }
 
-    loadUserByUsername(username: string): AuthenticationUser {
-        return this.users.get(username);
+    async loadUserByUsername(username: string): Promise<AuthenticationUser> {
+        return await this.getItem(username);
     }
 
-    setEnabled(username: string) {
-        this.setEnabledFlag(username, true);
+    async setEnabled(username: string) {
+        await this.setEnabledFlag(username, true);
     }
 
-    setDisabled(username: string) {
-        this.setEnabledFlag(username, false);
+    async setDisabled(username: string) {
+        await this.setEnabledFlag(username, false);
     }
 
-    protected setEnabledFlag(username: string, flag: boolean) {
+    protected async setEnabledFlag(username: string, enabled: boolean) {
 
-        const storedUser: AuthenticationUser =  this.loadUserByUsername(username);
-        const newUser: AuthenticationUser = new AuthenticationUserImpl(
-            username,
-            storedUser.getPassword(),
-            flag,
-            storedUser.getLoginAttemptsLeft(),
-            storedUser.getPasswordLastChangeDate(),
-            storedUser.getFirstName(),
-            storedUser.getLastName(),
-            storedUser.getAuthorities(),
-            storedUser.getLink(),
-            storedUser.getLinkDate()
-        );
-
-        //delete old user and set a new one, since iface does not support "setPassword()":
-        this.deleteUser(username);
-        this.users.set(username, newUser);
+        await this.updateItem(username, { enabled: enabled });
     }
 
-    isEnabled(username: string): boolean {
-        const storedUser: AuthenticationUser =  this.loadUserByUsername(username);
+    async isEnabled(username: string): Promise<boolean> {
+        const storedUser: AuthenticationUser =  await this.loadUserByUsername(username);
         if (!storedUser)
             return false;
-        return storedUser.isEnabled();
+        return await storedUser.isEnabled();
     }
 
     //TODO: should be in abstract class
@@ -60,57 +44,28 @@ export class AuthenticationAccountElasticsearchRepository implements Authenticat
         await this.setAttemptsLeft(username, --attempts);
     }
 
-    setAttemptsLeft(username: string, numAttemptsAllowed: number) {
-        const storedUser: AuthenticationUser =  this.loadUserByUsername(username);
-
-        const newUser: AuthenticationUser = new AuthenticationUserImpl(
-            username,
-            storedUser.getPassword(),
-            storedUser.isEnabled(),
-            numAttemptsAllowed,
-            storedUser.getPasswordLastChangeDate(),
-            storedUser.getFirstName(),
-            storedUser.getLastName(),
-            storedUser.getAuthorities(),
-            storedUser.getLink(),
-            storedUser.getLinkDate()
-        );
-
-        //delete old user and set a new one, since iface does not support "setPassword()":
-        this.deleteUser(username);
-        this.users.set(username, newUser);
+    async setAttemptsLeft(username: string, numAttemptsAllowed: number) {
+        await this.updateItem(username, { numAttemptsAllowed: numAttemptsAllowed });
     }
 
-    setPassword(username: string, newPassword: string) {
-        const storedUser: AuthenticationUser =  this.loadUserByUsername(username);
-
-        const newUser: AuthenticationUser = new AuthenticationUserImpl(
-            username,
-            newPassword,
-            storedUser.isEnabled(),
-            storedUser.getLoginAttemptsLeft(),
-            storedUser.getPasswordLastChangeDate(),
-            storedUser.getFirstName(),
-            storedUser.getLastName(),
-            storedUser.getAuthorities(),
-            null, null          //when resetting the password, delete the links so they become invalid.
-        );
-
-        //delete old user and set a new one, since iface does not support "setPassword()":
-        this.deleteUser(username);
-        this.users.set(username, newUser);
+    async setPassword(username: string, newPassword: string) {
+        await this.updateItem(username, {
+            password: newPassword,
+            link: null,
+            linkDate: null
+        });
     }
 
     //TODO: should be in abstract class, async/await
-    getEncodedPassword(username: string): string {
-        const storedUser: AuthenticationUser =  this.loadUserByUsername(username);
+    async getEncodedPassword(username: string): Promise<string> {
+        const storedUser: AuthenticationUser =  await this.loadUserByUsername(username);
         if (!storedUser)
             return null;
         return storedUser.getPassword();
     }
 
-    getPasswordLastChangeDate(username: string): Date {
-        const storedUser: AuthenticationUser =  this.loadUserByUsername(username);
+    async getPasswordLastChangeDate(username: string): Promise<Date> {
+        const storedUser: AuthenticationUser =  await this.loadUserByUsername(username);
         return storedUser.getPasswordLastChangeDate();
     }
 
@@ -118,7 +73,7 @@ export class AuthenticationAccountElasticsearchRepository implements Authenticat
         throw new Error("Method not implemented.");
     }
 
-    createUser(authenticationUser: AuthenticationUser): void {
+    async createUser(authenticationUser: AuthenticationUser): Promise<void> {
         debug('createUser / inmem implementation!');
 
         const newUser: AuthenticationUser = new AuthenticationUserImpl(authenticationUser.getUsername(),
@@ -132,92 +87,53 @@ export class AuthenticationAccountElasticsearchRepository implements Authenticat
             authenticationUser.getLink(),
             authenticationUser.getLinkDate());
 
-        if( this.userExists( newUser.getUsername() ) )
-        {
+        if( this.userExists( newUser.getUsername() ) ) {
             //ALREADY_EXIST:
             throw new Error(`user ${newUser.getUsername()} already exists`);
         }
 
-        this.users.set(newUser.getUsername(), newUser);
+        this.indexItem(newUser.getUsername(), newUser);
     }
 
-    deleteUser(username: string): void {
-        this.users.delete(username);
+    async deleteUser(username: string): Promise<void> {
+        await this.deleteItem(username);
     }
 
-    userExists(username: string): boolean {
+    async userExists(username: string): Promise<boolean> {
         debug('userExists?');
-        return this.users.has(username);
+        return await this.exists(username);
     }
 
-    addLink(username: string, link: string) {
-        const storedUser: AuthenticationUser =  this.loadUserByUsername(username);
-
-        const newUser: AuthenticationUser = new AuthenticationUserImpl(
-            username,
-            storedUser.getPassword(),
-            storedUser.isEnabled(),
-            storedUser.getLoginAttemptsLeft(),
-            storedUser.getPasswordLastChangeDate(),
-            storedUser.getFirstName(),
-            storedUser.getLastName(),
-            storedUser.getAuthorities(),
-            link,
-            new Date()
-        );
-
-        //delete old user and set a new one, since iface does not support "setPassword()":
-        this.deleteUser(username);
-        this.users.set(username, newUser);
+    async addLink(username: string, link: string) {
+        await this.updateItem(username, {
+            link: link,
+            linkDate: new Date()
+        });
     }
 
     /**
      * remove link
      * @param link
      */
-    removeLink(username: string): boolean {
-        const storedUser: AuthenticationUser =  this.loadUserByUsername(username);
-
-        if(!storedUser.getLink())
-            return false;
-
-        const newUser: AuthenticationUser = new AuthenticationUserImpl(
-            username,
-            storedUser.getPassword(),
-            storedUser.isEnabled(),
-            storedUser.getLoginAttemptsLeft(),
-            storedUser.getPasswordLastChangeDate(),
-            storedUser.getFirstName(),
-            storedUser.getLastName(),
-            storedUser.getAuthorities(),
-            null
-        );
-
-        //delete old user and set a new one, since iface does not support "setPassword()":
-        this.deleteUser(username);
-        this.users.set(username, newUser);
+    async removeLink(username: string): Promise<boolean> {
+        await this.updateItem(username, { link: null });
         return true;
     }
 
     //this is for the automation only:
-    getLink(username: string): { link: string; date: Date; } {
-        const storedUser: AuthenticationUser =  this.loadUserByUsername(username);
+    async getLink(username: string): Promise<{ link: string; date: Date; }> {
+        const storedUser: AuthenticationUser =  await this.loadUserByUsername(username);
         return {
             link: storedUser.getLink(),
             date: storedUser.getLinkDate()
         };
     }
 
-    /**
-     * in real DB we will index also the link. In-mem impl just iterates over all entries.
-     * @param link
-     */
-    getUsernameByLink(link: string): string {
-        for (let user of this.users.values()) {
-            debug(`########### ${user.getLink()} vs ${link}`);
-            if(user.getLink() === link)
-                return user.getUsername();
-        }
-        throw new Error("Could not find any user with this link.");
+    async getUsernameByLink(link: string): Promise<string> {
+        const item = await this.getItem(link);
+        if(!item)
+            throw new Error("Could not find any user with this link.");
+
+        return item.getUsername();
     }
 }
