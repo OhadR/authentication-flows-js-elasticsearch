@@ -5,7 +5,7 @@ const debug = require('debug')('authentication-account-inmem-repository');
 
 export class AuthenticationAccountElasticsearchRepository implements AuthenticationAccountRepository {
 
-    private users = new M ap<string, AuthenticationUser>();
+    private users = new Map<string, AuthenticationUser>();
 
     loadUserByUsername(username: string): AuthenticationUser {
         return this.users.get(username);
