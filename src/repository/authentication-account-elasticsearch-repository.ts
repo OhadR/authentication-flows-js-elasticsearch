@@ -48,8 +48,7 @@ export class AuthenticationAccountElasticsearchRepository extends EsBaseReposito
     }
 
     protected async setEnabledFlag(username: string, enabled: boolean) {
-
-        await this.updateItem(username, { enabled: enabled });
+        await this.updateItem(username, { isActive: enabled });
     }
 
     async isEnabled(username: string): Promise<boolean> {
@@ -67,15 +66,15 @@ export class AuthenticationAccountElasticsearchRepository extends EsBaseReposito
         await this.setAttemptsLeft(username, --attempts);
     }
 
-    async setAttemptsLeft(username: string, numAttemptsAllowed: number) {
-        await this.updateItem(username, { numAttemptsAllowed: numAttemptsAllowed });
+    async setAttemptsLeft(username: string, loginAttemptsLeft: number) {
+        await this.updateItem(username, { loginAttemptsLeft: loginAttemptsLeft });
     }
 
     async setPassword(username: string, newPassword: string) {
         await this.updateItem(username, {
             password: newPassword,
-            link: null,
-            linkDate: null
+            token: null,
+            tokenDate: null
         });
     }
 
@@ -139,7 +138,7 @@ export class AuthenticationAccountElasticsearchRepository extends EsBaseReposito
      * @param link
      */
     async removeLink(username: string): Promise<boolean> {
-        await this.updateItem(username, { link: null });
+        await this.updateItem(username, { token: null });
         return true;
     }
 
