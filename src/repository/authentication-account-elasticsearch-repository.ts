@@ -6,6 +6,12 @@ const debug = require('debug')('authentication-account-elasticsearch-repository'
 
 const AUTH_ACCOUNT_INDEX: string = 'authentication-account';
 
+const simple_query = {
+    query: {
+        term: { 'token': '' }
+    }
+};
+
 export class AuthenticationAccountElasticsearchRepository extends EsBaseRepository<AuthenticationUser> implements AuthenticationAccountRepository {
 
     constructor() {
@@ -134,7 +140,8 @@ export class AuthenticationAccountElasticsearchRepository extends EsBaseReposito
     }
 
     async getUsernameByLink(token: string): Promise<string> {
-        const items = await this.search({token: token});
+        simple_query.query.term.token = token;
+        const items = await this.search(simple_query);
         if(!items)
             throw new Error("Could not find any user with this link.");
 
