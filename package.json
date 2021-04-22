@@ -23,6 +23,7 @@
   "homepage": "https://github.com/OhadR/authentication-flows-js-elasticsearch#readme",
   "dependencies": {
     "authentication-flows-js": "0.1.23",
-    "typescript": "^4.2.4"
+    "typescript": "^4.2.4",
+    "elasticsearch": "^16.7.1"
   }
 }

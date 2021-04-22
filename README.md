@@ -5,3 +5,8 @@
 
 This project is a **ElasticSearch implementation** for `AuthenticationAccountRepository` of 
 [authentication-flows-js](https://github.com/OhadR/authentication-flows-js).
+
+
+## environment variables
+
+`ELASTIC_SEARCH_URL`

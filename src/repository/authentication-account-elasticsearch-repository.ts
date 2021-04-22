@@ -1,7 +1,7 @@
 import { AuthenticationAccountRepository,
 	AuthenticationUser,
     AuthenticationUserImpl } from 'authentication-flows-js';
-const debug = require('debug')('authentication-account-inmem-repository');
+const debug = require('debug')('authentication-account-elasticsearch-repository');
 
 export class AuthenticationAccountElasticsearchRepository implements AuthenticationAccountRepository {
 
