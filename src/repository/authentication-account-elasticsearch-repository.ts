@@ -72,7 +72,7 @@ export class AuthenticationAccountElasticsearchRepository extends EsBaseReposito
 
     async setPassword(username: string, newPassword: string) {
         await this.updateItem(username, {
-            password: newPassword,
+            encodedPassword: newPassword,
             token: null,
             tokenDate: null
         });
