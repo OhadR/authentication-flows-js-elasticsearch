@@ -128,7 +128,7 @@ export abstract class EsBaseRepository<T> {
             return Promise.reject(new Error('search() Invalid Args: query is null'));
         }
 
-        debug(`search(): Retrieving for query: '${query}'`);
+        debug(`search(): Retrieving for query: '${JSON.stringify(query)}'`);
         let items;     //hits from elastic
 
         try {
