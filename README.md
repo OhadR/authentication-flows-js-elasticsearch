@@ -11,6 +11,9 @@ This project is a **ElasticSearch implementation** for `AuthenticationAccountRep
 
 `ELASTIC_SEARCH_URL`
 
+## preparations
+
+download elasticsearch docker:
 
     docker pull docker.elastic.co/elasticsearch/elasticsearch:7.9.0
 
@@ -18,4 +21,30 @@ run elastic docker (version 7.1.0):
 
     docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.1.0
     
+create mapping for AFM:
+
+    PUT
+    http://localhost:9200/authentication-account-22042021
+    {
+        "mappings": {
+            "dynamic": "false",
+            "properties": {
+                "username": {
+                    "type": "keyword"
+                },
+                "passwordLastChangeDate": {
+                    "type": "date"
+                }
+                "token": {
+                    "type": "keyword"
+                }
+                "tokenDate": {
+                    "type": "date"
+                }
+            }
+        }    
+    }    
+
+set environment variable:
+
     set ELASTIC_SEARCH_URL=https://localhost:9200
