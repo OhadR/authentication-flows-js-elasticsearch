@@ -142,7 +142,6 @@ export class AuthenticationAccountElasticsearchRepository extends EsBaseReposito
         return true;
     }
 
-    //this is for the automation only:
     async getLink(username: string): Promise<{ link: string; date: Date; }> {
         const storedUser: AuthenticationUser =  await this.loadUserByUsername(username);
         return {

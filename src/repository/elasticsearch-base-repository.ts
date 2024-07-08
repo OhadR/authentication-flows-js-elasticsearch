@@ -12,6 +12,7 @@ export abstract class EsBaseRepository<T> {
 
         this._elasticClient = new ElasticClient({
             host: process.env.ELASTIC_SEARCH_URL,
+            httpAuth: process.env.ELASTIC_AUTH,
             //log: 'trace',  <= lets reduce the printouts, default is warning
             apiVersion: '7.2', // use the same version of your Elasticsearch instance
             createNodeAgent: nodeAgent

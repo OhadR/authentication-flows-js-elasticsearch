@@ -8,7 +8,8 @@ This project is a **ElasticSearch implementation** for `AuthenticationAccountRep
 
 ## environment variables
 
-`ELASTIC_SEARCH_URL`
+    ELASTIC_SEARCH_URL
+    ELASTIC_AUTH: username:password
 
 ## preparations
 
