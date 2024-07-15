@@ -91,8 +91,8 @@ export class AuthenticationAccountElasticsearchRepository extends EsBaseReposito
         return storedUser.getPasswordLastChangeDate();
     }
 
-    setAuthority(username: string, authority: string) {
-        throw new Error("Method not implemented.");
+    setAuthorities(username: string, authorities: string[]) {
+        return this.updateItem(username, { authorities });
     }
 
     async createUser(authenticationUser: AuthenticationUser): Promise<void> {
