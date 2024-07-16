@@ -1,5 +1,5 @@
 import { Client as ElasticClient } from "elasticsearch";
-const debug = require('debug')('elasticsearch-repository');
+const debug = require('debug')('authentication-flows:elasticsearch-repository');
 
 export abstract class EsBaseRepository<T> {
 

@@ -2,7 +2,7 @@ import { AuthenticationAccountRepository,
 	AuthenticationUser,
     AuthenticationUserImpl } from 'authentication-flows-js';
 import { EsBaseRepository } from "./elasticsearch-base-repository";
-const debug = require('debug')('authentication-account-elasticsearch-repository');
+const debug = require('debug')('authentication-flows:authentication-account-elasticsearch-repository');
 
 const AUTH_ACCOUNT_INDEX: string = 'authentication-account';
 
