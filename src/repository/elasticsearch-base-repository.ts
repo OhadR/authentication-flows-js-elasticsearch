@@ -98,7 +98,6 @@ export abstract class EsBaseRepository<T> {
                     doc: body
                 }
             });
-            debug(response);
 
         } catch (error) {
             debug(error);
