@@ -91,7 +91,7 @@ export class AuthenticationAccountElasticsearchRepository extends EsBaseReposito
         return storedUser.getPasswordLastChangeDate();
     }
 
-    setAuthorities(username: string, authorities: string[]) {
+    async setAuthorities(username: string, authorities: string[]) {
         return this.updateItem(username, { authorities });
     }
 
@@ -157,5 +157,9 @@ export class AuthenticationAccountElasticsearchRepository extends EsBaseReposito
             throw new Error("Could not find any user with this link.");
 
         return items[0].email;
+    }
+
+    async getAllUsers(): Promise<AuthenticationUser[]> {
+        return this.getAllItems();
     }
 }
