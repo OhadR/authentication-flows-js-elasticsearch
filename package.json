@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/OhadR/authentication-flows-js-elasticsearch#readme",
   "dependencies": {
-    "authentication-flows-js": "1.9.1",
+    "authentication-flows-js": "1.10.0",
     "elasticsearch": "^16.7.1"
   },
   "devDependencies": {
