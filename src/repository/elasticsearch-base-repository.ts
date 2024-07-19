@@ -93,6 +93,7 @@ export abstract class EsBaseRepository<T> {
             response = await this._elasticClient.update({
                 index: this.getIndex(),
                 id,
+                refresh: 'wait_for',
                 body: {
                     // put the partial document under the `doc` key
                     doc: body
