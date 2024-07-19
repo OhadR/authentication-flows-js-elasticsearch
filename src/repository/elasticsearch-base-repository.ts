@@ -174,7 +174,7 @@ export abstract class EsBaseRepository<T> {
 
         while (true) {
 
-            debug('$$$$$$$$$$$$$$ ' + response.hits.hits.length);
+            debug('getAllItems() found ' + response.hits.hits.length);
             if(response.hits.hits.length == 0) {
                 break;
             }

@@ -92,6 +92,7 @@ export class AuthenticationAccountElasticsearchRepository extends EsBaseReposito
     }
 
     async setAuthorities(username: string, authorities: string[]) {
+        debug(`setAuthorities(): authorities = ${authorities}`);
         return this.updateItem(username, { authorities });
     }
 
