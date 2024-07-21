@@ -160,6 +160,10 @@ export class AuthenticationAccountElasticsearchRepository extends EsBaseReposito
         return items[0].email;
     }
 
+    async setLastLoginDate(username: string, lastLoginDate: Date): Promise<any> {
+        return this.updateItem(username, { lastLoginDate });
+    }
+
     async getAllUsers(): Promise<AuthenticationUser[]> {
         return this.getAllItems();
     }
